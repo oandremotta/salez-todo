@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'themes';
+
+/* Estilos globais adicionais */
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+.fade-in-out {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.fade-in-out.ng-enter,
+.fade-in-out.ng-leave {
+  opacity: 0;
+}
+
+.fade-in-out.ng-enter-active,
+.fade-in-out.ng-leave-active {
+  opacity: 1;
+}
