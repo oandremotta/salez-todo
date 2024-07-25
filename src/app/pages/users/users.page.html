@@ -31,6 +31,11 @@
             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
             <lucide-angular name="eye"></lucide-angular>
           </button>
+          <!-- excluir usuário -->
+          <button (click)="deleteUser(user.id)"
+            class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded ml-2">
+            <lucide-angular name="trash-2"></lucide-angular>
+          </button>
         </td>
       </tr>
     </tbody>

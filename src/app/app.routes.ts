@@ -8,5 +8,9 @@ export const routes: Routes = [
   {
     path: 'users',
     loadChildren: () => import('./pages/users/users.routes').then(m => m.routes),
+  },
+  {
+    path: 'tasks',
+    loadComponent: () => import('./pages/tasks/tasks.page').then( m => m.TasksPage)
   }
 ];

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, from, map, catchError } from 'rxjs';
-import { Firestore, addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, updateDoc, where } from '@angular/fire/firestore';
+import { Firestore, addDoc, collection, deleteDoc, doc, docData, getDocs, orderBy, query, updateDoc, where } from '@angular/fire/firestore';
 import { User } from './user.interface';
 
 
@@ -80,6 +80,11 @@ export class UserService {
     } catch (error) {
       console.error("Error deleting document: ", error);
     }
+  }
+
+  getUserById(userId: any): Observable<User> {
+    const userDoc = doc(this.firestore, 'users', userId);
+    return docData(userDoc) as Observable<User>;
   }
 
 }

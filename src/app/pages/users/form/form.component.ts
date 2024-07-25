@@ -4,7 +4,6 @@ import { User } from '../user.interface';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { UserService } from '../user.service';
-import { ConfirmationModalComponent } from 'src/app/shared/components/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-form',
@@ -65,20 +64,4 @@ export class FormComponent implements OnInit {
   }
 
 
-  async deleteUser() {
-    const confirmationModal = await this.modalController.create({
-      component: ConfirmationModalComponent
-    });
-
-    await confirmationModal.present();
-
-    const { data } = await confirmationModal.onWillDismiss();
-    if (data?.confirmed && this.user?.id) {
-      await this.userService.deleteUser(this.user.id);
-
-      this.modalController.dismiss({ reload: true });
-    } else {
-      console.log('Exclusão cancelada');
-    }
-  }
 }

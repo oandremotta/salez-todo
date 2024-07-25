@@ -27,9 +27,6 @@
     </ion-radio-group>
     <div class="p-6">
       <ion-button expand="block" type="submit">{{ isEdit ? 'Atualizar' : 'Adicionar' }} Usuário</ion-button>
-      @if(isEdit){
-      <ion-button expand="block" color="danger" (click)="deleteUser()">Deletar</ion-button>
-      }
     </div>
   </form>
 </ion-content>

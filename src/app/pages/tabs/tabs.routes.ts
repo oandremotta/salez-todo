@@ -12,15 +12,15 @@ export const routes: Routes = [
           import("../users/users.page").then((m) => m.UsersPage),
       },
       {
-        path: '',
-        redirectTo: '/tabs/tab1',
-        pathMatch: 'full',
-      },
+        path: 'tasks',
+        loadComponent: () =>
+          import("../tasks/tasks.page").then((m) => m.TasksPage),
+      }
     ],
   },
   {
     path: '',
-    redirectTo: '/tabs/tab1',
+    redirectTo: '/tabs/users',
     pathMatch: 'full',
   },
 ];

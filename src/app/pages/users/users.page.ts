@@ -9,6 +9,7 @@ import { UserService } from './user.service';
 import { Observable } from 'rxjs';
 import { User } from './user.interface';
 import { HeaderComponent } from 'src/app/shared/components/header/header.component';
+import { ConfirmationModalComponent } from 'src/app/shared/components/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-users',
@@ -71,5 +72,22 @@ export class UsersPage implements OnInit {
     }
   }
 
+  async deleteUser(userId: string) {
+    const confirmationModal = await this.modalCtrl.create({
+      component: ConfirmationModalComponent
+    });
 
+    await confirmationModal.present();
+
+    const { data } = await confirmationModal.onWillDismiss();
+    if (data?.confirmed) {
+      await this.userService.deleteUser(userId);
+
+      this.users$ = this.userService.getUsers();
+    } else {
+      console.log('Exclusão cancelada');
+    }
+
+  }
 }
+
