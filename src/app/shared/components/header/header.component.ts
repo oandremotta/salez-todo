@@ -22,7 +22,7 @@ export class HeaderComponent implements OnInit {
   @Input() goBack?: boolean = true;
   @Input() defaultHref?: string | undefined;
   @Input() translucent?: boolean = false;
-  @Input() function?: () => void
+  @Input() hasAdd?: boolean = false;
 
 
   ngOnInit(): void {

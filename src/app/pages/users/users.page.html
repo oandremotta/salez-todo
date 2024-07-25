@@ -1,8 +1,13 @@
 <!-- src/app/user-list/user-list.page.html -->
 
-<app-header title="Usuários" [function]="openModal"></app-header>
+<app-header title="Usuários" [hasAdd]="true" (click)="openModal()"></app-header>
 
 <ion-content class="mx-auto bg-red" [fullscreen]="true">
+  <div class="p-4 bg-white shadow-md mb-4 rounded">
+    <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" placeholder="Buscar por nome"
+      class="border rounded p-2 w-full" />
+  </div>
+
   <table class="min-w-full bg-white">
     <thead>
       <tr>
@@ -12,7 +17,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let user of users" class="hover:bg-gray-100">
+      <tr *ngFor="let user of users$ | async" class="hover:bg-gray-100">
         <td class="py-2 px-4 border-b text-center">{{ user.name }}</td>
         <td class="py-2 px-4 border-b text-center">
           <span [ngClass]="user.role === 'user' ? 'bg-green-200 text-green-800' : 'bg-blue-200 text-blue-800'"
@@ -22,10 +27,10 @@
 
         </td>
         <td class="py-2 px-4 border-b text-center">
-          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
+          <button (click)="openEditModal(user)"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
             <lucide-angular name="eye"></lucide-angular>
           </button>
-
         </td>
       </tr>
     </tbody>

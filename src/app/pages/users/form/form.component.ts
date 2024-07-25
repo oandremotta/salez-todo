@@ -1,29 +1,84 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonButton, IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonContent, IonItem } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular/standalone';
 import { User } from '../user.interface';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
+import { UserService } from '../user.service';
+import { ConfirmationModalComponent } from 'src/app/shared/components/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.scss'],
-  standalone: true
+  standalone: true,
+  imports: [IonicModule, FormsModule, ReactiveFormsModule]
 })
 export class FormComponent implements OnInit {
+
+  userForm: FormGroup;
 
   @Input() user: User = { name: '', role: 'user' };
   @Input() isEdit: boolean = false;
 
-  constructor(private modalController: ModalController) { }
+  constructor(private modalController: ModalController, private userService: UserService) {
+    this.userForm = new FormGroup({
+      name: new FormControl(this.user.name || ''),
+      role: new FormControl(this.user.role || 'user')
+    });
+  }
 
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    if (this.isEdit) {
+      this.userForm.patchValue(this.user);
+    }
   }
 
   save() {
-    this.modalController.dismiss(this.user);
+    if (this.userForm.valid) {
+      const formValue = this.userForm.value;
+      // Garantir que role é um valor válido
+      const userData: User = {
+        name: formValue.name || '',
+        role: formValue.role as 'admin' | 'user' // Assegura que role é do tipo 'admin' | 'user'
+      };
+      if (this.isEdit) {
+        console.log(this.user);
+        if (this.user && this.user.id) {
+          this.userService.updateUser(this.user.id, userData);
+          this.modalController.dismiss({ userData, reload: true });
+        }
+      } else {
+        this.userService.addUser(userData).then(() => {
+          this.modalController.dismiss({ userData, reload: true });
+        }).catch(error => {
+          console.error("Error saving user: ", error);
+        });
+      }
+    } else {
+      console.log("Form is invalid");
+    }
   }
 
   close() {
+    this.modalController.dismiss({ reload: false });
     this.modalController.dismiss();
+  }
+
+
+  async deleteUser() {
+    const confirmationModal = await this.modalController.create({
+      component: ConfirmationModalComponent
+    });
+
+    await confirmationModal.present();
+
+    const { data } = await confirmationModal.onWillDismiss();
+    if (data?.confirmed && this.user?.id) {
+      await this.userService.deleteUser(this.user.id);
+
+      this.modalController.dismiss({ reload: true });
+    } else {
+      console.log('Exclusão cancelada');
+    }
   }
 }

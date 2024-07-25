@@ -1,8 +1,8 @@
 <ion-header [translucent]="translucent">
   <ion-toolbar class="px-2">
     <ion-title>{{title}}</ion-title>
-    @if(function){
-    <lucide-angular slot="end" (click)="function()" name="plus"></lucide-angular>
+    @if(hasAdd){
+    <lucide-angular slot="end" name="plus"></lucide-angular>
     }
   </ion-toolbar>
 </ion-header>

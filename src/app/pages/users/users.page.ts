@@ -2,11 +2,13 @@ import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
-import { HeaderComponent } from "../../components/header/header.component";
-import { Firestore } from '@angular/fire/firestore';
-import { collection, getDoc, getDocs } from 'firebase/firestore';
+import { Firestore, collection, getDocs } from '@angular/fire/firestore';
 import { ActionSheetController, IonicModule, ModalController } from '@ionic/angular';
 import { FormComponent } from './form/form.component';
+import { UserService } from './user.service';
+import { Observable } from 'rxjs';
+import { User } from './user.interface';
+import { HeaderComponent } from 'src/app/shared/components/header/header.component';
 
 @Component({
   selector: 'app-users',
@@ -19,26 +21,21 @@ import { FormComponent } from './form/form.component';
 })
 export class UsersPage implements OnInit {
 
-  users: any = [];
-  constructor(private firestore: Firestore, private modalCtrl: ModalController) { }
+  users$!: Observable<any[]>;
+  searchTerm: string = '';
+
+  constructor(private modalCtrl: ModalController, private userService: UserService) { }
   isEdit: boolean = false;
   currentUserId: string | null = null;
 
 
   ngOnInit() {
-    this.getUsers();
+    this.users$ = this.userService.getUsers();
   }
 
-  async getUsers() {
-    try {
-      const dataRef: any = collection(this.firestore, 'users');
-      const querySnapshot = await getDocs(dataRef);
-      this.users = await querySnapshot.docs.map((doc) => {
-        let user: any = doc.data();
-        return user;
-      });
-      console.log(this.users);
-    } catch (e) { }
+  onSearchChange() {
+    // Atualiza a lista de usuários com base no termo de busca
+    this.users$ = this.userService.getUsers(this.searchTerm);
   }
 
   async openModal() {
@@ -48,34 +45,31 @@ export class UsersPage implements OnInit {
     });
 
     modal.present!();
-    const { data, role } = await modal.onWillDismiss();
+
+    const { data } = await modal.onWillDismiss();
+    console.log(data);
+
+    if (data?.reload) {
+      console.log("Hhhhh");
+      this.users$ = this.userService.getUsers();
+    }
   }
 
-  // async editUser(user: User) {
-  //   const modal = await this.modalController.create({
-  //     component: UserFormComponent,
-  //     componentProps: { user, isEdit: true }
-  //   });
-  //   await modal.present();
-  //   const { data } = await modal.onWillDismiss();
-  //   if (data) {
-  //     try {
-  //       const userRef = doc(this.firestore, 'users', user.id!);
-  //       await updateDoc(userRef, data);
-  //       this.getUsers();
-  //     } catch (e) {
-  //       console.error("Error updating user: ", e);
-  //     }
-  //   }
-  // }
+  async openEditModal(user: User) {
+    const modal = await this.modalCtrl.create({
+      component: FormComponent,
+      componentProps: { user: user, isEdit: true }
+    });
 
-  // async deleteUser(userId: string) {
-  //   try {
-  //     await deleteDoc(doc(this.firestore, 'users', userId));
-  //     this.getUsers();
-  //   } catch (e) {
-  //     console.error("Error deleting user: ", e);
-  //   }
-  // }
+    modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    console.log(data);
+
+    if (data?.reload) {
+      this.users$ = this.userService.getUsers();
+    }
+  }
+
 
 }
