@@ -12,14 +12,18 @@
       class="bg-white rounded-lg shadow-md p-6 transition-transform transform hover:scale-105">
       <div class="flex justify-between items-start mb-4">
         <span class="bg-pink-200 text-pink-800 text-xs font-semibold rounded-full px-2 py-1 mb-4">
-          {{ task.userName || 'N/A' }}
+          {{ task?.userName || 'N/A' }}
         </span>
         <p class="text-sm text-gray-600 mb-2">
           <span [ngClass]="{
             'bg-green-200 text-green-800': task.status === 'done',
             'bg-blue-200 text-blue-800': task.status !== 'done'
           }" class="text-xs font-semibold rounded-full px-2 py-1">
+            @if(task.status){
             {{ task.status | titlecase }}
+            }@else {
+            N/A
+            }
           </span>
         </p>
       </div>

@@ -8,6 +8,7 @@ import { User } from 'firebase/auth';
 import { UserService } from '../../users/user.service';
 import { Observable } from 'rxjs';
 import { Timestamp } from 'firebase/firestore';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-task-form',
@@ -37,22 +38,33 @@ export class TaskFormComponent implements OnInit {
   ngOnInit(): void {
     this.users$ = this.userService.getUsers();
     if (this.isEdit) {
-      this.taskForm.patchValue(this.task);
-      console.log(this.task.exp_date.toDate().toISOString().substring(0, 10));
+      const formattedDate = moment(this.task.exp_date).format('YYYY-MM-DD');
+      this.taskForm.setValue({
+        title: this.task.title,
+        description: this.task.description,
+        status: this.task.status,
+        exp_date: formattedDate,
+        user_id: this.task.user_id
+
+      });
     }
   }
 
   save() {
     if (this.taskForm.valid) {
       const formValue = this.taskForm.value;
+
+      // Ajuste a data para garantir que o fuso horário esteja correto
+      const expDate = new Date(formValue.exp_date + 'T00:00:00'); // Adiciona hora para evitar problemas com fuso horário
       const taskData: Task = {
         title: formValue.title,
         description: formValue.description,
         status: formValue.status as 'pendente' | 'em andamento' | 'concluído',
-        exp_date: Timestamp.fromDate(new Date(formValue.exp_date)),
+        exp_date: Timestamp.fromDate(expDate),
         created_at: this.task.created_at || Timestamp.now(),
         user_id: formValue.user_id
       };
+
       if (this.isEdit) {
         if (this.task && this.task.id) {
           this.taskService.updateTask(this.task.id, taskData).then(() => {
@@ -72,6 +84,7 @@ export class TaskFormComponent implements OnInit {
       console.log("Form is invalid");
     }
   }
+
 
   close() {
     this.modalController.dismiss({ reload: false });

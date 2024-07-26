@@ -29,24 +29,25 @@ export class TaskService {
       switchMap(querySnapshot => {
         const tasksWithUsers$ = querySnapshot.docs.map(doc => {
           const data = doc.data() as Task;
-          const userId = data.user_id;
+          const userId = data?.user_id;
           const taskWithDates = {
             ...data,
             exp_date: this.convertTimestamp(data.exp_date),
             created_at: this.convertTimestamp(data.created_at)
           };
 
-          // Consulta o usuário associado a cada tarefa
-          return this.userService.getUserById(userId).pipe(
-            map(user => ({
-              id: doc.id,
-              ...taskWithDates,
-              userName: user ? user.name : 'Unknown'
-            }))
-          );
+          if (userId) {
+            return this.userService.getUserById(userId).pipe(
+              map(user => ({
+                id: doc.id,
+                ...taskWithDates,
+                userName: user ? user.name : 'Unknown'
+              }))
+            );
+          }
+          return 'Unknown';
         });
 
-        // Combina todos os observáveis de usuários e tarefas
         return combineLatest(tasksWithUsers$);
       }),
       catchError(error => {
