@@ -6,27 +6,33 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content>
-  <form [formGroup]="userForm" (ngSubmit)="save()">
-    <ion-item>
-      <ion-label position="floating">Name</ion-label>
-      <ion-input formControlName="name"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label>Role</ion-label>
-    </ion-item>
-    <ion-radio-group formControlName="role" class="flex space-x-4 px-4">
-      <ion-item class="flex items-center space-x-2">
-        <ion-radio slot="start" value="admin"></ion-radio>
-        <ion-label (click)="userForm.controls['role'].setValue('admin')">Admin</ion-label>
-      </ion-item>
-      <ion-item class="flex items-center space-x-2">
-        <ion-radio slot="start" value="user"></ion-radio>
-        <ion-label (click)="userForm.controls['role'].setValue('user')">User</ion-label>
-      </ion-item>
-    </ion-radio-group>
-    <div class="p-6">
-      <ion-button expand="block" type="submit">{{ isEdit ? 'Atualizar' : 'Adicionar' }} Usuário</ion-button>
+
+<ion-content class="p-4">
+  <form class="px-4 mt-4" [formGroup]="userForm" (ngSubmit)="save()">
+    <div class="form-group mb-4">
+      <label for="name" class="block text-sm font-medium text-gray-700">Nome</label>
+      <input type="text" id="name"
+        class="form-control mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" formControlName="name"
+        required>
+    </div>
+
+    <div class="mb-4">
+      <ion-radio-group formControlName="role" class="flex justify-center">
+        <ion-item lines="none" class="flex items-center">
+          <ion-radio slot="start" value="admin"></ion-radio>
+          <ion-label (click)="userForm.controls['role'].setValue('admin')">Admin</ion-label>
+        </ion-item>
+        <ion-item lines="none" class="flex items-center">
+          <ion-radio slot="start" value="user"></ion-radio>
+          <ion-label (click)="userForm.controls['role'].setValue('user')">User</ion-label>
+        </ion-item>
+      </ion-radio-group>
+    </div>
+
+    <div class="mt-6">
+      <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        {{ isEdit ? 'Atualizar' : 'Adicionar' }} Usuário
+      </button>
     </div>
   </form>
 </ion-content>

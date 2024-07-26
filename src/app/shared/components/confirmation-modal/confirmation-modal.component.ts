@@ -20,4 +20,8 @@ export class ConfirmationModalComponent implements OnInit {
   }
   ngOnInit() { }
 
+  close() {
+    this.modalCtrl.dismiss();
+  }
+
 }

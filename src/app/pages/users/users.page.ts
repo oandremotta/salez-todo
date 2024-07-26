@@ -51,7 +51,6 @@ export class UsersPage implements OnInit {
     console.log(data);
 
     if (data?.reload) {
-      console.log("Hhhhh");
       this.users$ = this.userService.getUsers();
     }
   }
@@ -59,7 +58,7 @@ export class UsersPage implements OnInit {
   async openEditModal(user: User) {
     const modal = await this.modalCtrl.create({
       component: FormComponent,
-      componentProps: { user: user, isEdit: true }
+      componentProps: { user: user, isEdit: true },
     });
 
     modal.present();
