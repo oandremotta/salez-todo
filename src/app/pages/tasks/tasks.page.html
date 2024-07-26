@@ -38,9 +38,16 @@
         </p>
 
       </div>
-      <ion-button (click)="openEditModal(task)" class="bg-pink-300 mt-2" expand="full">
-        <lucide-angular name="eye"></lucide-angular> Ver
-      </ion-button>
+      <div class="flex justify-between items-center gap-2 mt-2">
+        <button (click)="openEditModal(task)"
+          class="flex items-center bg-pink-500 hover:bg-pink-400 text-white font-semibold py-2 px-4 rounded transition-colors">
+          <lucide-angular name="eye" class="mr-2"></lucide-angular> Ver
+        </button>
+
+        <button (click)="delete(task)" class="flex items-center  font-semibold py-2 px-4 rounded transition-colors">
+          <lucide-angular name="trash-2" class="mr-2"></lucide-angular> Deletar
+        </button>
+      </div>
 
     </div>
   </div>

@@ -1,16 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { User } from '../user.interface';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { UserService } from '../user.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule, ReactiveFormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule]
 })
 export class FormComponent implements OnInit {
 
@@ -21,8 +22,8 @@ export class FormComponent implements OnInit {
 
   constructor(private modalController: ModalController, private userService: UserService) {
     this.userForm = new FormGroup({
-      name: new FormControl(this.user.name || ''),
-      role: new FormControl(this.user.role || 'user')
+      name: new FormControl(this.user.name || '', Validators.required),
+      role: new FormControl(this.user.role || 'user', Validators.required)
     });
   }
 

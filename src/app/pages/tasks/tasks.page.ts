@@ -80,4 +80,12 @@ export class TasksPage implements OnInit {
     return formattedDate;
   }
 
+  delete(task: Task) {
+    this.taskService.deleteTask(task.id).then(() => {
+      this.getTasks();
+    }).catch((error: any) => {
+      console.error('Error deleting task: ', error);
+    });
+  }
+
 }

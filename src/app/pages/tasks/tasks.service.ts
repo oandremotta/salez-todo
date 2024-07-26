@@ -33,14 +33,14 @@ export class TaskService {
               map(user => ({
                 id: doc.id,
                 ...taskWithDates,
-                userName: user ? user.name : 'Unknown'
+                userName: user ? user.name : 'N/A'
               }))
             );
           }
           return of({
             id: doc.id,
             ...taskWithDates,
-            userName: 'Unknown'
+            userName: 'N/A'
           });
         });
 
@@ -78,6 +78,15 @@ export class TaskService {
       await updateDoc(taskDoc, updatedTask);
     } catch (error) {
       console.error("Error updating document: ", error);
+    }
+  }
+
+  async deleteTask(id: any) {
+    try {
+      const taskDoc = doc(this.firestore, 'tasks', id);
+      await deleteDoc(taskDoc);
+    } catch (error) {
+      console.error("Error deleting document: ", error);
     }
   }
 

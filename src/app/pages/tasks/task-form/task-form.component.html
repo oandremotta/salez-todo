@@ -13,6 +13,10 @@
       <input type="text" id="title"
         class="form-control mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" formControlName="title"
         required>
+      <p *ngIf="taskForm.get('title')?.invalid && (taskForm.get('title')?.dirty || taskForm.get('title')?.touched)"
+        class="mt-2 text-sm text-red-600">
+        O nome é obrigatório.
+      </p>
     </div>
 
     <div class="form-group mt-3">
@@ -36,6 +40,10 @@
       <input type="date" id="exp_date"
         class="form-control mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
         formControlName="exp_date">
+      <p *ngIf="taskForm.get('exp_date')?.invalid && (taskForm.get('exp_date')?.dirty || taskForm.get('exp_date')?.touched)"
+        class="mt-2 text-sm text-red-600">
+        O nome é obrigatório.
+      </p>
     </div>
 
     <div class="form-group mt-3">
@@ -47,8 +55,9 @@
     </div>
 
     <div class="form-group mt-3">
-      <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        Salvar
+      <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        [disabled]="taskForm.invalid">
+        {{isEdit ? 'Atualizar' : 'Salvar'}}
       </button>
     </div>
 

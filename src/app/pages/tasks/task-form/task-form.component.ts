@@ -27,11 +27,11 @@ export class TaskFormComponent implements OnInit {
 
   constructor(private modalController: ModalController, private taskService: TaskService, private userService: UserService) {
     this.taskForm = new FormGroup({
-      title: new FormControl(this.task.title || '', { nonNullable: true }),
-      description: new FormControl(this.task.description || ''),
+      title: new FormControl(this.task.title || '', Validators.required),
+      description: new FormControl(this.task.description || '',),
       status: new FormControl(this.task.status || 'pending'),
-      exp_date: new FormControl(this.task.exp_date || ''),
-      user_id: new FormControl(this.task.user_id || '', { nonNullable: true })
+      exp_date: new FormControl(this.task.exp_date || '', Validators.required),
+      user_id: new FormControl(this.task.user_id || '')
     });
   }
 

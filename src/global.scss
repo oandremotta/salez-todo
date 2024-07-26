@@ -73,3 +73,10 @@
   --ion-color-step-950: #8e1e40;
 
 }
+
+button:disabled {
+  background-color: #b0bec5;
+  /* Cor de fundo para o botão desativado */
+  cursor: not-allowed;
+  /* Cursor indicando que o botão está desativado */
+}
