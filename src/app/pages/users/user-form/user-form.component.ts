@@ -7,13 +7,13 @@ import { UserService } from '../user.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-form',
-  templateUrl: './form.component.html',
-  styleUrls: ['./form.component.scss'],
+  selector: 'app-user-form',
+  templateUrl: './user-form.component.html',
+  styleUrls: ['./user-form.component.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule]
 })
-export class FormComponent implements OnInit {
+export class UserFormComponent implements OnInit {
 
   userForm: FormGroup;
 

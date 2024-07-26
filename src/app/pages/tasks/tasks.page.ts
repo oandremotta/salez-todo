@@ -11,13 +11,14 @@ import { TaskFormComponent } from './task-form/task-form.component';
 import { Task } from './task.interface';
 import { Timestamp } from 'firebase/firestore';
 import * as moment from 'moment';
+import { SkeletonComponent } from 'src/app/shared/components/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.page.html',
   styleUrls: ['./tasks.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, HeaderComponent, LucideAngularModule]
+  imports: [IonicModule, CommonModule, FormsModule, HeaderComponent, LucideAngularModule, SkeletonComponent]
 })
 export class TasksPage implements OnInit {
 
@@ -28,6 +29,7 @@ export class TasksPage implements OnInit {
   statusFilter: string = '';
   sortByDate: boolean = false;
   sortOrder: 'asc' | 'desc' = 'asc';
+  loaded: boolean = false;
 
 
   constructor(private taskService: TaskService, private modalCtrl: ModalController) { }
@@ -55,6 +57,8 @@ export class TasksPage implements OnInit {
     this.taskService.getTasks().subscribe({
       next: (tasks) => {
         this.tasks = tasks;
+        console.log("Entrou");
+        console.log('Tasks: ', tasks);
         this.applyFilters();
       },
       error: (error) => {
@@ -78,6 +82,7 @@ export class TasksPage implements OnInit {
       result = this.sortTasksByDate(result);
     }
 
+    this.loaded = true;
     this.filteredTasks = result;
   }
 

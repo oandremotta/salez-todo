@@ -1,92 +1,89 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
-import { Firestore, collection, getDocs } from '@angular/fire/firestore';
-import { ActionSheetController, IonicModule, ModalController } from '@ionic/angular';
-import { FormComponent } from './form/form.component';
+import { ModalController } from '@ionic/angular';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { UserService } from './user.service';
-import { Observable } from 'rxjs';
 import { User } from './user.interface';
 import { HeaderComponent } from 'src/app/shared/components/header/header.component';
 import { ConfirmationModalComponent } from 'src/app/shared/components/confirmation-modal/confirmation-modal.component';
+import { UserFormComponent } from './user-form/user-form.component';
+import { SkeletonComponent } from 'src/app/shared/components/skeleton/skeleton.component';
+import { IonContent } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-users',
   templateUrl: './users.page.html',
   styleUrls: ['./users.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, LucideAngularModule, HeaderComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
-
+  imports: [IonContent, CommonModule, FormsModule, LucideAngularModule, HeaderComponent, SkeletonComponent],
 })
 export class UsersPage implements OnInit {
 
-  users$!: Observable<any[]>;
-  searchTerm: string = '';
+  users$!: Observable<User[]>;
+  userNameFilter: string = '';
+  filteredUsers: User[] = [];
 
   constructor(private modalCtrl: ModalController, private userService: UserService) { }
-  isEdit: boolean = false;
-  currentUserId: string | null = null;
-
 
   ngOnInit() {
     this.users$ = this.userService.getUsers();
+    this.users$.subscribe(users => this.filteredUsers = users);
   }
 
-  onSearchChange() {
-    // Atualiza a lista de usuários com base no termo de busca
-    this.users$ = this.userService.getUsers(this.searchTerm);
+  applyFilters() {
+    this.users$.subscribe(users => {
+      this.filteredUsers = users.filter(user =>
+        (!this.userNameFilter || user.name.toLowerCase().includes(this.userNameFilter.toLowerCase()))
+      );
+    });
   }
 
   async openModal() {
     const modal = await this.modalCtrl.create({
-      component: FormComponent,
+      component: UserFormComponent,
       componentProps: { isEdit: false }
     });
 
-    modal.present!();
-
+    await modal.present();
     const { data } = await modal.onWillDismiss();
-    console.log(data);
 
     if (data?.reload) {
       this.users$ = this.userService.getUsers();
+      this.users$.subscribe(users => this.filteredUsers = users);
     }
   }
 
   async openEditModal(user: User) {
     const modal = await this.modalCtrl.create({
-      component: FormComponent,
+      component: UserFormComponent,
       componentProps: { user: user, isEdit: true },
     });
 
-    modal.present();
-
+    await modal.present();
     const { data } = await modal.onWillDismiss();
-    console.log(data);
 
     if (data?.reload) {
       this.users$ = this.userService.getUsers();
+      this.users$.subscribe(users => this.filteredUsers = users);
     }
   }
 
-  async deleteUser(userId: string) {
+  async deleteUser(user: User) {
     const confirmationModal = await this.modalCtrl.create({
       component: ConfirmationModalComponent
     });
 
     await confirmationModal.present();
-
     const { data } = await confirmationModal.onWillDismiss();
-    if (data?.confirmed) {
-      await this.userService.deleteUser(userId);
 
+    if (data?.confirmed && user.id) {
+      await this.userService.deleteUser(user.id);
       this.users$ = this.userService.getUsers();
+      this.users$.subscribe(users => this.filteredUsers = users);
     } else {
       console.log('Exclusão cancelada');
     }
-
   }
 }
-

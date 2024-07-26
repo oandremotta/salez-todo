@@ -1,12 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { UserService } from './user.service';
-import { User } from './user.interface';
+import { UserService } from '../user.service';
+import { User } from '../user.interface';
 
 class MockUserService {
   getUsers() {
-    return of([{ name: 'John Doe', role: 'admin' },
-    { name: 'André Motta', role: 'user' }]);
+    return of([{ name: 'John Doe', role: 'admin' }]);
   }
 }
 
@@ -27,9 +26,17 @@ describe('UserService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should fetch users', () => {
+  it('should be John Doe', () => {
     service.getUsers().subscribe(users => {
-      expect(users.length).toBe(2);
+      const user = users[0];
+      expect(user.name).toBe('John Doe');
+    });
+  });
+
+  it('should be an admin', () => {
+    service.getUsers().subscribe(users => {
+      const user = users[0];
+      expect(user.role).toBe('admin');
     });
   });
 

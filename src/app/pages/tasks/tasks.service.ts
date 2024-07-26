@@ -19,6 +19,11 @@ export class TaskService {
 
     return from(getDocs(taskQuery)).pipe(
       switchMap(querySnapshot => {
+        if (querySnapshot.empty) {
+          // Retorna um array vazio se não houver documentos
+          return of([]);
+        }
+
         const tasksWithUsers$ = querySnapshot.docs.map(doc => {
           const data = doc.data() as Task;
           const userId = data?.user_id;
@@ -37,6 +42,7 @@ export class TaskService {
               }))
             );
           }
+
           return of({
             id: doc.id,
             ...taskWithDates,
@@ -44,19 +50,25 @@ export class TaskService {
           });
         });
 
+        // Combina todos os observáveis e aplica filtros
         return combineLatest(tasksWithUsers$).pipe(
           map(tasks => tasks.filter(task =>
             (!titleFilter || task.title?.includes(titleFilter)) &&
             (!userNameFilter || task.userName.includes(userNameFilter))
-          ))
+          )),
+          catchError(error => {
+            console.error("Error processing tasks: ", error);
+            return of([]);
+          })
         );
       }),
       catchError(error => {
         console.error("Error getting tasks: ", error);
-        throw error;
+        return of([]);
       })
     );
   }
+
 
   async addTask(tas: Task) {
     try {
