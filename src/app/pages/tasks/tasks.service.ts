@@ -13,17 +13,9 @@ export class TaskService {
 
   constructor(private firestore: Firestore, private userService: UserService) { }
 
-  getTasks(titleFilter?: string): Observable<any[]> {
+  getTasks(titleFilter?: string, userNameFilter?: string): Observable<any[]> {
     const tasksCollection = collection(this.firestore, 'tasks');
-    let taskQuery;
-
-    if (titleFilter) {
-      // Adiciona um filtro se o título estiver presente
-      taskQuery = query(tasksCollection, where('title', '==', titleFilter), orderBy('title'));
-    } else {
-      // Ordena todos os documentos pelo campo 'title'
-      taskQuery = query(tasksCollection, orderBy('title'));
-    }
+    let taskQuery = query(tasksCollection, orderBy('title'));
 
     return from(getDocs(taskQuery)).pipe(
       switchMap(querySnapshot => {
@@ -45,10 +37,19 @@ export class TaskService {
               }))
             );
           }
-          return 'Unknown';
+          return of({
+            id: doc.id,
+            ...taskWithDates,
+            userName: 'Unknown'
+          });
         });
 
-        return combineLatest(tasksWithUsers$);
+        return combineLatest(tasksWithUsers$).pipe(
+          map(tasks => tasks.filter(task =>
+            (!titleFilter || task.title?.includes(titleFilter)) &&
+            (!userNameFilter || task.userName.includes(userNameFilter))
+          ))
+        );
       }),
       catchError(error => {
         console.error("Error getting tasks: ", error);

@@ -8,6 +8,9 @@ import { HeaderComponent } from 'src/app/shared/components/header/header.compone
 import { IonicModule, ModalController } from '@ionic/angular';
 import { LucideAngularModule } from 'lucide-angular';
 import { TaskFormComponent } from './task-form/task-form.component';
+import { Task } from './task.interface';
+import { Timestamp } from 'firebase/firestore';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-tasks',
@@ -18,13 +21,14 @@ import { TaskFormComponent } from './task-form/task-form.component';
 })
 export class TasksPage implements OnInit {
 
-  tasks$!: Observable<any[]>;
+  tasks: Task[] = [];
   searchTerm: string = '';
+  userNameFilter: string = '';
 
   constructor(private taskService: TaskService, private modalCtrl: ModalController) { }
 
   ngOnInit() {
-    this.tasks$ = this.taskService.getTasks();
+    this.getTasks();
   }
 
   async openModal() {
@@ -38,12 +42,20 @@ export class TasksPage implements OnInit {
     const { data } = await modal.onWillDismiss();
 
     if (data?.reload) {
-      this.tasks$ = this.taskService.getTasks();
+      this.getTasks();
     }
   }
 
-  onSearchChange() {
-    this.tasks$ = this.taskService.getTasks(this.searchTerm);
+  getTasks() {
+    this.taskService.getTasks().subscribe({
+      next: (tasks) => {
+        this.tasks = tasks;
+        console.log(this.tasks);
+      },
+      error: (error) => {
+        console.error('Error getting tasks: ', error);
+      }
+    })
   }
 
   async openEditModal(task: Task) {
@@ -58,8 +70,14 @@ export class TasksPage implements OnInit {
     console.log(data);
 
     if (data?.reload) {
-      this.tasks$ = this.taskService.getTasks();
+      this.getTasks();
     }
+  }
+
+  convertTimestampToDate(timestamp: Timestamp): string {
+    const formattedDate = moment(timestamp).format('YYYY-MM-DD');
+
+    return formattedDate;
   }
 
 }

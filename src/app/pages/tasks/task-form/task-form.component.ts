@@ -54,7 +54,6 @@ export class TaskFormComponent implements OnInit {
     if (this.taskForm.valid) {
       const formValue = this.taskForm.value;
 
-      // Ajuste a data para garantir que o fuso horário esteja correto
       const expDate = new Date(formValue.exp_date + 'T00:00:00'); // Adiciona hora para evitar problemas com fuso horário
       const taskData: Task = {
         title: formValue.title,

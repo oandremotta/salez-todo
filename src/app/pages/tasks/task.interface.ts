@@ -7,5 +7,6 @@ export interface Task {
   status: 'pendente' | 'em andamento' | 'concluído';
   created_at: Timestamp;
   exp_date: Timestamp;
+  userName?: string;
   user_id: string;
 }

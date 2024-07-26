@@ -1,14 +1,9 @@
 <app-header title="Tasks" [hasAdd]="true" (click)="openModal()"></app-header>
 
 <ion-content class="bg-gray-100" [fullscreen]="true">
-  <div class="p-4 bg-white shadow-md mb-4 rounded-md  mx-auto">
-    <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
-      placeholder="Buscar por título ou descrição"
-      class="border rounded-lg p-3 w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-  </div>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-    <div *ngFor="let task of tasks$ | async"
+    <div *ngFor="let task of tasks"
       class="bg-white rounded-lg shadow-md p-6 transition-transform transform hover:scale-105">
       <div class="flex justify-between items-start mb-4">
         <span class="bg-pink-200 text-pink-800 text-xs font-semibold rounded-full px-2 py-1 mb-4">
@@ -16,8 +11,9 @@
         </span>
         <p class="text-sm text-gray-600 mb-2">
           <span [ngClass]="{
-            'bg-green-200 text-green-800': task.status === 'done',
-            'bg-blue-200 text-blue-800': task.status !== 'done'
+            'bg-green-200 text-green-800': task.status === 'concluído',
+            'bg-yellow-200 text-yellow-800': task.status === 'em andamento',
+            'bg-blue-200 text-blue-800': task.status === 'pendente'
           }" class="text-xs font-semibold rounded-full px-2 py-1">
             @if(task.status){
             {{ task.status | titlecase }}
@@ -37,7 +33,8 @@
         <p class="text-sm text-gray-600 mb-2">
           <strong>
             Vencimento
-          </strong> {{ task.exp_date | date: 'dd/MM/yyyy' }}
+          </strong>
+          {{ convertTimestampToDate(task.exp_date) | date: 'dd/MM/yyyy' }}
         </p>
 
       </div>
