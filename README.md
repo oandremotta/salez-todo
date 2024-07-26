@@ -8,10 +8,7 @@ This project is built with Angular 18.1.2, Ionic 7.2.0, Node.js 20.11.0, and npm
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Development](#development)
-- [Build](#build)
-- [Usage](#usage)
 - [Dependencies](#dependencies)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Prerequisites
