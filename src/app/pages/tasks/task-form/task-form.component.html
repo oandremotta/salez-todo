@@ -50,9 +50,11 @@
       <label for="user_id" class="block text-sm font-medium text-gray-700">Usuário</label>
       <select id="user_id" class="form-control mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
         formControlName="user_id">
+        <option *ngIf="!(users$ | async)?.length" value="" disabled>Não há usuários cadastrados</option>
         <option *ngFor="let user of users$ | async" [value]="user.id">{{ user.name }}</option>
       </select>
     </div>
+
 
     <div class="form-group mt-3">
       <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
