@@ -24,6 +24,11 @@ export class TasksPage implements OnInit {
   tasks: Task[] = [];
   searchTerm: string = '';
   userNameFilter: string = '';
+  filteredTasks: Task[] = [];
+  statusFilter: string = '';
+  sortByDate: boolean = false;
+  sortOrder: 'asc' | 'desc' = 'asc';
+
 
   constructor(private taskService: TaskService, private modalCtrl: ModalController) { }
 
@@ -50,12 +55,30 @@ export class TasksPage implements OnInit {
     this.taskService.getTasks().subscribe({
       next: (tasks) => {
         this.tasks = tasks;
-        console.log(this.tasks);
+        this.applyFilters();
       },
       error: (error) => {
         console.error('Error getting tasks: ', error);
       }
     })
+  }
+
+  applyFilters() {
+    let result = this.tasks;
+
+    if (this.statusFilter) {
+      result = result.filter(task => task.status === this.statusFilter);
+    }
+
+    if (this.userNameFilter) {
+      result = result.filter(task => task.userName?.toLowerCase().includes(this.userNameFilter.toLowerCase()));
+    }
+
+    if (this.sortByDate) {
+      result = this.sortTasksByDate(result);
+    }
+
+    this.filteredTasks = result;
   }
 
   async openEditModal(task: Task) {
@@ -78,6 +101,22 @@ export class TasksPage implements OnInit {
     const formattedDate = moment(timestamp).format('YYYY-MM-DD');
 
     return formattedDate;
+  }
+
+  sortTasksByDate(tasks: Task[]): Task[] {
+    return tasks.sort((a, b) => {
+      const dateA = a.exp_date instanceof Timestamp ? a.exp_date.toDate() : new Date(a.exp_date);
+      const dateB = b.exp_date instanceof Timestamp ? b.exp_date.toDate() : new Date(b.exp_date);
+      const diff = dateA.getTime() - dateB.getTime();
+
+      return this.sortOrder === 'asc' ? diff : -diff; // Ordena conforme a direção
+    });
+  }
+
+  toggleSortOrder() {
+    this.sortByDate = true;
+    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    this.applyFilters();
   }
 
   delete(task: Task) {
