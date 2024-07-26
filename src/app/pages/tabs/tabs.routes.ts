@@ -20,7 +20,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: '/tabs/users',
+    redirectTo: '/tabs/tasks',
     pathMatch: 'full',
   },
 ];
